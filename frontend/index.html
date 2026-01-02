@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Adaptive Traffic Signal Advisory</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>🚦 Adaptive Traffic Signal Advisory System</h1>
+  <p>Real-time signal timing recommendations</p>
+</header>
+
+<div class="container">
+
+  <section class="card">
+    <h2>📊 Live Traffic Metrics</h2>
+    <pre id="metrics"></pre>
+  </section>
+
+  <section class="card highlight">
+  <h2>🧠 Signal Advisory</h2>
+
+  <div id="advice">
+
+    <h3>⏱️ Green Time Allocation</h3>
+    <ul id="greenTimes"></ul>
+
+    <h3>📊 Reason for Decision</h3>
+    <ul id="reasoning"></ul>
+
+    <h3>🚸 Safety Status</h3>
+    <ul id="safety"></ul>
+
+    <h3>🧭 Police Action</h3>
+    <ul id="policeAction"></ul>
+
+  </div>
+</section>
+
+
+  <button onclick="getAdvice()">🔁 Get Signal Advice</button>
+
+</div>
+
+<footer>
+    <p>✔ Recommendation based on real-time traffic metrics and standard traffic engineering principles.
+</p>
+  <p>Certified Traffic Engineer AI • Advisory Only</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
