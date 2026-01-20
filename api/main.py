@@ -9,6 +9,9 @@ from typing import List, Dict, Optional
 import uvicorn
 from typing import Literal
 from datetime import datetime
+from detector.step5_queue_from_video import build_queue_data_from_video
+from detector.step6_signal_pipeline import run_signal_advisory
+
 
 
 from chatbot.traffic_advisor import TrafficAdvisoryChatbot, ChatbotResponse
@@ -143,6 +146,40 @@ async def get_signal_advice(request: TrafficRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+@app.post("/advise_from_video")
+async def advise_from_video():
+    """
+    Get signal timing recommendations directly from traffic video
+    """
+
+    VIDEO_PATH = "traffic.mp4"  # must exist in project root
+
+    try:
+        # STEP 5: Build queue data from real video
+        queue_data = build_queue_data_from_video(VIDEO_PATH)
+
+        # STEP 6: Run signal advisory
+        result = run_signal_advisory(queue_data)
+        decision = result["signal_decision"]
+
+        # Return frontend-friendly JSON
+        return {
+            "status": "success",
+            "signal_timings": {
+                "per_approach": decision.recommended_green_times,
+                "cycle_time": decision.cycle_time
+            },
+            "reasoning_points": decision.reasoning,
+            "safety_status": {
+                "checks": decision.safety_confirmation
+            },
+            "police_action": decision.operational_advice
+            or ["No manual intervention required"]
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/quick_advice")
 async def quick_advice(

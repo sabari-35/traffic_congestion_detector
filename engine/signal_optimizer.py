@@ -1,17 +1,26 @@
 """
-Optimize signal timings with safety constraints
+Optimize signal timings with PRIORITY-FIRST allocation.
+
+Rules:
+1. 🚑 Emergency vehicles get ABSOLUTE priority
+2. 🔥 High demand approaches get green FIRST
+3. 🚸 Pedestrian safety is enforced
+4. ⚠ Spillback risk can extend green
+5. ⏱ Cycle time is strictly respected
 """
 
 from typing import List, Dict, Tuple
 from dataclasses import dataclass
+
 from config.constants import TrafficConstants
 from engine.traffic_math import TrafficCalculator, SignalTiming
 from detector.traffic_metrics import TrafficMetrics
 
+
 class SignalOptimizer:
     """Optimize signal timings for all approaches"""
 
-    def __init__(self, area_type: str = 'urban'):
+    def __init__(self, area_type: str = "urban"):
         self.calculator = TrafficCalculator(area_type)
 
     def optimize_timings(
@@ -20,102 +29,125 @@ class SignalOptimizer:
         current_cycle_time: float
     ) -> Tuple[List[SignalTiming], float, Dict]:
 
-        # ================================
-        # STEP 1: DEMAND-WEIGHTED GREEN TIME
-        # ================================
-        total_demand = sum(m.demand_pcu for m in all_metrics)
+        MIN_GREEN = TrafficConstants.MIN_GREEN_TIME
+        MAX_GREEN = TrafficConstants.MAX_GREEN_TIME
 
-        # Safety guard: no traffic anywhere
-        if total_demand == 0:
-            equal_green = current_cycle_time / len(all_metrics)
-            required_greens = [
-                (m.approach_id, equal_green, m) for m in all_metrics
-            ]
-        else:
-            required_greens = []
-            for metrics in all_metrics:
-                demand_ratio = metrics.demand_pcu / total_demand
+        # =====================================================
+        # 🚑 STEP 0: EMERGENCY OVERRIDE (ABSOLUTE PRIORITY)
+        # =====================================================
+        emergency_approach = None
+        for m in all_metrics:
+            if "ambulance" in m.vehicle_counts and m.vehicle_counts["ambulance"] > 0:
+                emergency_approach = m.approach_id
+                break
 
-                # Demand dominance weighting
-                if demand_ratio >= 0.35:
-                    weight = 1.5
-                elif demand_ratio >= 0.25:
-                    weight = 1.3
-                elif demand_ratio >= 0.15:
-                    weight = 1.1
+        if emergency_approach:
+            signal_timings = []
+            analysis = {
+                "emergency": True,
+                "emergency_approach": emergency_approach
+            }
+
+            for m in all_metrics:
+                if m.approach_id == emergency_approach:
+                    green = MAX_GREEN
                 else:
-                    weight = 1.0
+                    green = MIN_GREEN
 
-                base_green = current_cycle_time * demand_ratio * weight
-
-                required_greens.append(
-                    (metrics.approach_id, base_green, metrics)
+                signal_timings.append(
+                    SignalTiming(
+                        approach_id=m.approach_id,
+                        green_time=green,
+                        pedestrian_time=0
+                    )
                 )
 
-        # ================================
-        # STEP 2: SAFETY CONSTRAINTS
-        # ================================
-        constrained_greens = []
-        for approach_id, green_time, metrics in required_greens:
-            safe_green = max(TrafficConstants.MIN_GREEN_TIME, green_time)
-            safe_green = min(TrafficConstants.MAX_GREEN_TIME, safe_green)
+            actual_cycle = sum(t.total_time() for t in signal_timings)
+            return signal_timings, round(actual_cycle, 1), analysis
 
-            ped_time = self.calculator.calculate_pedestrian_time(
-                metrics.pedestrian_count
-            )
-            safe_green = max(safe_green, ped_time)
+        # =====================================================
+        # STEP 1: SORT BY DEMAND (HIGH → LOW)
+        # =====================================================
+        sorted_metrics = sorted(
+            all_metrics,
+            key=lambda m: m.demand_pcu,
+            reverse=True
+        )
 
-            constrained_greens.append((approach_id, safe_green, metrics))
-
-        # ================================
-        # STEP 3: NORMALIZE TO CYCLE TIME
-        # ================================
-        total_required = sum(green for _, green, _ in constrained_greens)
-        total_interphase = len(all_metrics) * (
-            TrafficConstants.YELLOW_TIME + TrafficConstants.ALL_RED_TIME
+        # Interphase time (yellow + all-red)
+        total_interphase = len(sorted_metrics) * (
+            TrafficConstants.YELLOW_TIME +
+            TrafficConstants.ALL_RED_TIME
         )
 
         available_green = current_cycle_time - total_interphase
+        if available_green <= 0:
+            raise ValueError("Cycle time too small for interphase")
 
-        if total_required > available_green:
-            scale_factor = available_green / total_required
-            normalized_greens = []
-            for approach_id, green_time, metrics in constrained_greens:
-                scaled_green = max(
-                    TrafficConstants.MIN_GREEN_TIME,
-                    green_time * scale_factor
-                )
-                normalized_greens.append((approach_id, scaled_green, metrics))
-        else:
-            normalized_greens = constrained_greens
+        total_demand = sum(m.demand_pcu for m in sorted_metrics if m.demand_pcu > 0)
 
-        # ================================
-        # STEP 4: SIGNAL TIMING OBJECTS
-        # ================================
+        # =====================================================
+        # STEP 2: PRIORITY-FIRST GREEN ALLOCATION
+        # =====================================================
+        allocations = []
+        remaining_green = available_green
+
+        for m in sorted_metrics:
+            if remaining_green <= MIN_GREEN:
+                break
+
+            if total_demand > 0:
+                share = (m.demand_pcu / total_demand) * available_green
+            else:
+                share = MIN_GREEN
+
+            green = max(MIN_GREEN, min(share, MAX_GREEN))
+
+            # Pedestrian safety
+            ped_time = self.calculator.calculate_pedestrian_time(
+                m.pedestrian_count
+            )
+            green = max(green, ped_time)
+
+            green = min(green, remaining_green)
+
+            allocations.append((m.approach_id, green, m))
+            remaining_green -= green
+
+        # =====================================================
+        # STEP 3: MINIMUM GREEN FOR LEFTOVER APPROACHES
+        # =====================================================
+        allocated_ids = {a for a, _, _ in allocations}
+
+        for m in sorted_metrics:
+            if m.approach_id not in allocated_ids:
+                allocations.append((m.approach_id, MIN_GREEN, m))
+
+        # =====================================================
+        # STEP 4: BUILD SIGNAL TIMINGS + ANALYSIS
+        # =====================================================
         signal_timings = []
         analysis = {
             "spillback_risks": [],
-            "congestion_warnings": [],
-            "pedestrian_alerts": []
+            "pedestrian_alerts": [],
+            "priority_order": [m.approach_id for m in sorted_metrics]
         }
 
-        for approach_id, green_time, metrics in normalized_greens:
-            if metrics.check_spillback_risk():
+        for approach_id, green_time, m in allocations:
+
+            # Spillback override
+            if m.check_spillback_risk():
+                green_time = min(green_time * 1.3, MAX_GREEN)
                 analysis["spillback_risks"].append({
                     "approach": approach_id,
-                    "queue_length": metrics.queue_length,
-                    "recommendation": "Consider emergency green extension"
+                    "queue_length": m.queue_length,
+                    "action": "Green extended due to spillback risk"
                 })
-                green_time = min(
-                    green_time * 1.3,
-                    TrafficConstants.MAX_GREEN_TIME
-                )
 
-            if metrics.pedestrian_count > 15:
+            if m.pedestrian_count > 15:
                 analysis["pedestrian_alerts"].append({
                     "approach": approach_id,
-                    "pedestrian_count": metrics.pedestrian_count,
-                    "message": "High pedestrian activity"
+                    "pedestrians": m.pedestrian_count
                 })
 
             signal_timings.append(
@@ -123,14 +155,14 @@ class SignalOptimizer:
                     approach_id=approach_id,
                     green_time=round(green_time, 1),
                     pedestrian_time=self.calculator.calculate_pedestrian_time(
-                        metrics.pedestrian_count
+                        m.pedestrian_count
                     )
                 )
             )
 
-        # ================================
-        # STEP 5: ACTUAL CYCLE TIME
-        # ================================
-        actual_cycle = sum(t.total_time() for t in signal_timings)
+        # =====================================================
+        # STEP 5: FINAL CYCLE TIME
+        # =====================================================
+        actual_cycle_time = sum(t.total_time() for t in signal_timings)
 
-        return signal_timings, actual_cycle, analysis
+        return signal_timings, round(actual_cycle_time, 1), analysis

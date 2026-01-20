@@ -141,4 +141,8 @@ def visualize(video_path):
 
     cap.release()
     cv2.destroyAllWindows()
+    
     print("✅ Visualization closed")
+if __name__ == "__main__":
+    video_path = "traffic.mp4"   # <-- use your actual video
+    visualize(video_path)

@@ -2,54 +2,1351 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Adaptive Traffic Signal Advisory</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adaptive Traffic Signal Advisory System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #888aa3;
+      --secondary: #00acc1;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --dark: #0d1524;
+      --light: #f8fafc;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      --glow: 0 0 30px rgba(0, 172, 193, 0.4);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1a237e 0%, #0d1524 50%, #1a237e 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0d1524 0%, #1a237e 100%);
+    }
+
+    .bg-animation div {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+      opacity: 0.15;
+    }
+
+    .bg-animation div:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: var(--secondary);
+      top: 10%;
+      left: 5%;
+      animation-duration: 25s;
+    }
+
+    .bg-animation div:nth-child(2) {
+      width: 300px;
+      height: 300px;
+      background: var(--success);
+      top: 60%;
+      right: 10%;
+      animation-duration: 30s;
+      animation-delay: 2s;
+    }
+
+    .bg-animation div:nth-child(3) {
+      width: 250px;
+      height: 250px;
+      background: var(--warning);
+      bottom: 20%;
+      left: 15%;
+      animation-duration: 22s;
+      animation-delay: 1s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(30px, 60px) rotate(90deg); }
+      50% { transform: translate(0, 120px) rotate(180deg); }
+      75% { transform: translate(-30px, 60px) rotate(270deg); }
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, #0C7779 0%, #095c5e 100%);
+      backdrop-filter: blur(15px);
+      border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+      height: 180px;
+      border-radius: 0 0 40px 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--secondary), var(--success), transparent);
+      animation: scan 4s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ff6b6b, #4ecdc4, #45b7d1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.5px;
+      text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .tagline {
+      font-size: 1.4rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 400;
+      max-width: 700px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.8rem 2rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1800px;
+      margin: 40px auto;
+      padding: 2rem 3rem;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+    }
+
+    /* Cards - Enhanced for visibility */
+    .card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+      backdrop-filter: blur(20px);
+      border-radius: 35px;
+      padding: 3rem 3.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        var(--shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      min-height: 650px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.4),
+        var(--glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96c93d);
+      z-index: 2;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card.highlight {
+      background: linear-gradient(145deg, rgba(12, 119, 121, 0.25), rgba(9, 92, 94, 0.15));
+      border: 2px solid rgba(78, 205, 196, 0.5);
+      box-shadow: 
+        0 20px 60px rgba(78, 205, 196, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .card.highlight:hover {
+      box-shadow: 
+        0 30px 80px rgba(78, 205, 196, 0.3),
+        var(--glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(78, 205, 196, 0.7);
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffffff;
+      padding-bottom: 1.5rem;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .card-title i {
+      color: #ff6b6b;
+      font-size: 2.2rem;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    .card-title::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 120px;
+      height: 3px;
+      background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+    }
+
+    /* Chart Container */
+    .chart-container {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 25px;
+      padding: 2rem;
+      margin-top: 2rem;
+      height: 380px;
+      position: relative;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.3);
+      flex-grow: 1;
+    }
+
+    /* Green Time Grid - FIXED FOR VISIBILITY */
+    .green-time-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+      margin: 2rem 0;
+      flex-grow: 1;
+      height: auto;
+      min-height: 280px;
+    }
+
+    @media (max-width: 1400px) {
+      .green-time-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .green-time-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .green-time-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .green-time-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    .approach-card {
+      background: linear-gradient(145deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.25));
+      border-radius: 20px;
+      padding: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: var(--transition);
+      border-left: 6px solid;
+      min-height: 220px;
+      max-height: 240px;
+      justify-content: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      overflow: visible;
+      position: relative;
+    }
+
+    .approach-card:hover {
+      transform: scale(1.03) translateY(-5px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.25);
+      z-index: 10;
+    }
+
+    .approach-card.s5 { border-left-color: #4ecdc4; }
+    .approach-card.e2 { border-left-color: #45b7d1; }
+    .approach-card.wc { border-left-color: #ffd166; }
+    .approach-card.nr { border-left-color: #ef476f; }
+
+    .approach-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+    }
+
+    .approach-name i {
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.6rem;
+      border-radius: 10px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .approach-time {
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin: 0.5rem 0;
+      background: linear-gradient(135deg, #ffffff, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
+      line-height: 1;
+    }
+
+    .approach-unit {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Progress Bars */
+    .progress-container {
+      margin: 2rem 0;
+    }
+
+    .progress-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .progress-bar {
+      height: 14px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 7px;
+      overflow: hidden;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 7px;
+      background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+      position: relative;
+      transition: width 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 3px 10px rgba(78, 205, 196, 0.4);
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Lists */
+    .info-list {
+      list-style: none;
+    }
+
+    .info-list li {
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      transition: var(--transition);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .info-list li:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateX(8px);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .info-list li i {
+      color: #4ecdc4;
+      font-size: 1.3rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    /* Status Indicators */
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      border: 2px solid;
+      white-space: nowrap;
+    }
+
+    .status.safe {
+      background: rgba(78, 205, 196, 0.25);
+      color: #4ecdc4;
+      border-color: rgba(78, 205, 196, 0.4);
+    }
+
+    .status.warning {
+      background: rgba(255, 209, 102, 0.25);
+      color: #ffd166;
+      border-color: rgba(255, 209, 102, 0.4);
+    }
+
+    .status.danger {
+      background: rgba(239, 71, 111, 0.25);
+      color: #ef476f;
+      border-color: rgba(239, 71, 111, 0.4);
+    }
+
+    /* Button */
+    .action-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      width: 50%;
+      padding: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      margin: 2.5rem auto;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .action-button {
+        width: 80%;
+        padding: 1.2rem;
+        font-size: 1.1rem;
+      }
+    }
+
+    .action-button:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 
+        0 25px 60px rgba(255, 107, 107, 0.4),
+        var(--glow);
+      background: linear-gradient(90deg, #ff5252, #45b7d1, #4ecdc4);
+    }
+
+    .action-button:active {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.8s;
+      z-index: -1;
+    }
+
+    .action-button:hover::before {
+      left: 100%;
+    }
+
+    .action-button i {
+      font-size: 1.5rem;
+    }
+
+    .action-button.loading i {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #D02752 0%, #a81e40 100%);
+      border-top: 3px solid rgba(255, 255, 255, 0.15);
+      margin-top: 3rem;
+      border-radius: 40px 40px 0 0;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .certification {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 1.1rem;
+    }
+
+    .certification i {
+      color: #ffd166;
+      font-size: 1.5rem;
+    }
+
+    footer p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 1.2rem;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    .delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .delay-3 { animation-delay: 0.3s; opacity: 0; }
+    .delay-4 { animation-delay: 0.4s; opacity: 0; }
+    .delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+    /* Traffic Light Animation */
+    .traffic-light {
+      position: fixed;
+      top: 40px;
+      right: 40px;
+      width: 80px;
+      height: 200px;
+      background: linear-gradient(145deg, #333, #222);
+      border-radius: 15px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      border: 3px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .traffic-light {
+        display: none;
+      }
+    }
+
+    .light {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 0 auto;
+      opacity: 0.4;
+      transition: all 0.5s ease;
+      border: 2px solid transparent;
+    }
+
+    .light.red { background: #ff6b6b; }
+    .light.yellow { background: #ffd166; }
+    .light.green { background: #4ecdc4; }
+
+    .light.active {
+      opacity: 1;
+      box-shadow: 0 0 20px currentColor;
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    /* Auto-refresh indicator */
+    .auto-refresh {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(69, 183, 209, 0.2));
+      border: 2px solid rgba(78, 205, 196, 0.5);
+      border-radius: 12px;
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.9rem;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .auto-refresh {
+        top: 20px;
+        left: 20px;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    .auto-refresh .dot {
+      width: 10px;
+      height: 10px;
+      background: #4ecdc4;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 8px #4ecdc4;
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 40px;
+      right: 40px;
+      padding: 1.2rem 1.8rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      animation: fadeIn 0.4s ease-out;
+      backdrop-filter: blur(10px);
+      border: 2px solid;
+      max-width: 350px;
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.95), rgba(69, 183, 209, 0.9));
+      color: white;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, rgba(239, 71, 111, 0.95), rgba(255, 107, 107, 0.9));
+      color: white;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .notification.hidden {
+      animation: fadeIn 0.4s ease-out reverse;
+      opacity: 0;
+    }
+
+    .notification i {
+      font-size: 1.8rem;
+    }
+
+    /* Loading placeholders */
+    .loading-placeholder {
+      text-align: center;
+      padding: 3rem;
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .loading-placeholder i {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: #4ecdc4;
+      animation: pulse 2s infinite;
+    }
+
+    .loading-placeholder p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+    }
+
+    /* Police Action Container */
+    #policeAction > div {
+      padding: 2rem;
+      border-radius: 20px;
+      gap: 1.5rem;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+      border: 2px solid;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    #policeAction i {
+      font-size: 2.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1.2rem;
+      border-radius: 15px;
+    }
+
+    #policeAction h4 {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+      font-weight: 800;
+    }
+
+    #policeAction p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Section Headers */
+    h3 {
+      font-size: 1.6rem;
+      margin: 2rem 0 1.2rem;
+      color: #4ecdc4;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+    }
+
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+
+    /* Content Visibility Enhancements */
+    .content-highlight {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+      border-left: 4px solid #4ecdc4;
+    }
+
+    .value-display {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #ffd166;
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+      margin: 0.5rem 0;
+    }
+
+    .metric-label {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #4ecdc4, #45b7d1);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #45b7d1, #4ecdc4);
+    }
+  </style>
 </head>
 <body>
-
-<header>
-  <h1>🚦 Adaptive Traffic Signal Advisory System</h1>
-  <p>Real-time signal timing recommendations</p>
-</header>
-
-<div class="container">
-
-  <section class="card">
-    <h2>📊 Live Traffic Metrics</h2>
-    <pre id="metrics"></pre>
-  </section>
-
-  <section class="card highlight">
-  <h2>🧠 Signal Advisory</h2>
-
-  <div id="advice">
-
-    <h3>⏱️ Green Time Allocation</h3>
-    <ul id="greenTimes"></ul>
-
-    <h3>📊 Reason for Decision</h3>
-    <ul id="reasoning"></ul>
-
-    <h3>🚸 Safety Status</h3>
-    <ul id="safety"></ul>
-
-    <h3>🧭 Police Action</h3>
-    <ul id="policeAction"></ul>
-
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div></div>
+    <div></div>
+    <div></div>
   </div>
-</section>
 
+  <!-- Auto-refresh indicator -->
+  <div class="auto-refresh">
+    <div class="dot"></div>
+    <span>Auto-refresh: 30s</span>
+  </div>
 
-  <button onclick="getAdvice()">🔁 Get Signal Advice</button>
+  <!-- Traffic Light Animation -->
+  <div class="traffic-light">
+    <div class="light red active"></div>
+    <div class="light yellow"></div>
+    <div class="light green"></div>
+  </div>
 
-</div>
+  <header>
+    <h1>🚦 Adaptive Traffic Signal Advisory System</h1>
+    <p class="tagline">AI-Powered Real-Time Signal Timing Recommendations</p>
+  </header>
 
-<footer>
-    <p>✔ Recommendation based on real-time traffic metrics and standard traffic engineering principles.
-</p>
-  <p>Certified Traffic Engineer AI • Advisory Only</p>
-</footer>
+  <div class="container">
+    <div class="dashboard">
+      <!-- Left Column: Green Time Allocation -->
+      <div class="card animate-in delay-1">
+        <div class="card-title">
+          <i class="fas fa-clock"></i>
+          <span>⏱️ Green Time Allocation</span>
+        </div>
+        
+        <div class="green-time-grid" id="greenTimesContainer">
+          <!-- Will be populated by JavaScript -->
+          <div class="loading-placeholder">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading real-time traffic data...</p>
+          </div>
+        </div>
 
-<script src="app.js"></script>
+        <!-- Chart for Green Time Distribution -->
+        <div class="chart-container">
+          <canvas id="greenTimeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Column: Signal Advisory -->
+      <div class="card highlight animate-in delay-2">
+        <div class="card-title">
+          <i class="fas fa-brain"></i>
+          <span>🧠 Signal Advisory</span>
+        </div>
+
+        <div id="advice">
+          <h3>📊 Reasoning & Analysis</h3>
+          <div class="progress-container" id="progressContainer">
+            <!-- Will be populated by JavaScript -->
+            <div class="loading-placeholder" style="min-height: 200px;">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Analyzing traffic patterns...</p>
+            </div>
+          </div>
+
+          <h3>🚸 Safety Status</h3>
+          <ul class="info-list" id="safety">
+            <!-- Will be populated by JavaScript -->
+            <li><i class="fas fa-spinner fa-spin"></i> Loading safety checks...</li>
+          </ul>
+
+          <h3>🧭 Police Action Required</h3>
+          <div id="policeAction" style="margin-top: 1rem;">
+            <!-- Will be populated by JavaScript -->
+            <div style="text-align: center; padding: 2rem;">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Assessing situation...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decision Factors Card -->
+    <div class="card animate-in delay-3" style="grid-column: 1 / -1; min-height: 450px;">
+      <div class="card-title">
+        <i class="fas fa-chart-bar"></i>
+        <span>📈 Decision Factors Analysis</span>
+      </div>
+      <div id="reasoning" style="margin-top: 1rem; flex-grow: 1;">
+        <!-- Will be populated by JavaScript -->
+        <div class="loading-placeholder">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Calculating decision factors...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Button -->
+    <button class="action-button animate-in delay-4" onclick="getAdvice()" id="adviceButton">
+      <i class="fas fa-sync-alt"></i>
+      🔁 GENERATE NEW SIGNAL ADVICE
+    </button>
+  </div>
+
+  <footer class="animate-in delay-5">
+    <div class="certification">
+      <i class="fas fa-shield-alt"></i>
+      <span>Certified Traffic Engineer AI • Advisory Only</span>
+    </div>
+    <p>✔️ Recommendations based on real-time traffic metrics, predictive analytics, and standard traffic engineering principles (ITE, FHWA). System updates every 30 seconds.</p>
+  </footer>
+
+  <script>
+    // Global variables
+    let greenTimeChart;
+    let autoRefreshInterval;
+    const ctx = document.getElementById('greenTimeChart').getContext('2d');
+    const adviceButton = document.getElementById('adviceButton');
+
+    // Traffic Light Animation
+    const lights = document.querySelectorAll('.light');
+    let currentLight = 0;
+
+    function cycleLights() {
+      lights.forEach(light => light.classList.remove('active'));
+      lights[currentLight].classList.add('active');
+      currentLight = (currentLight + 1) % lights.length;
+    }
+
+    setInterval(cycleLights, 2000);
+
+    // Initialize Chart
+    function initChart() {
+      greenTimeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: [
+              'rgba(78, 205, 196, 0.9)',
+              'rgba(69, 183, 209, 0.9)',
+              'rgba(255, 209, 102, 0.9)',
+              'rgba(239, 71, 111, 0.9)'
+            ],
+            borderColor: [
+              'rgba(78, 205, 196, 1)',
+              'rgba(69, 183, 209, 1)',
+              'rgba(255, 209, 102, 1)',
+              'rgba(239, 71, 111, 1)'
+            ],
+            borderWidth: 3,
+            hoverOffset: 20
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'white',
+                font: {
+                  size: 14,
+                  weight: '600'
+                },
+                padding: 20
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#4ecdc4',
+              bodyColor: 'white',
+              borderColor: 'rgba(78, 205, 196, 0.5)',
+              borderWidth: 2,
+              cornerRadius: 10,
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.raw} seconds`;
+                }
+              }
+            }
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true,
+            duration: 1500
+          }
+        }
+      });
+    }
+
+    // Your existing function - modified to work with new UI
+    async function getAdvice() {
+      try {
+        // Show loading state
+        adviceButton.classList.add('loading');
+        adviceButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING TRAFFIC PATTERNS...';
+        adviceButton.disabled = true;
+
+        const res = await fetch("http://127.0.0.1:8000/advise_from_video", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        console.log("Response status:", res.status);
+
+        const data = await res.json();
+        console.log("Response data:", data);
+
+        // Render the advisory data
+        renderAdvisory(data);
+        
+        // Show success notification
+        showNotification('Signal advice updated successfully!', 'success');
+
+      } catch (err) {
+        console.error("FETCH ERROR:", err);
+        showNotification('Failed to fetch signal advisory. Check console.', 'error');
+      } finally {
+        // Reset button state
+        adviceButton.classList.remove('loading');
+        adviceButton.innerHTML = '<i class="fas fa-sync-alt"></i> 🔁 GENERATE NEW SIGNAL ADVICE';
+        adviceButton.disabled = false;
+      }
+    }
+
+    // Enhanced renderAdvisory function for the new UI
+    function renderAdvisory(data) {
+      if (!data || data.status !== "success") {
+        document.getElementById("greenTimesContainer").innerHTML = 
+          '<div style="text-align: center; padding: 2rem; color: #ef476f; grid-column: 1 / -1; background: rgba(239, 71, 111, 0.1); border-radius: 20px; border: 2px solid rgba(239, 71, 111, 0.3);">' +
+          '<i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1.2rem;"></i><br>' +
+          '<h3 style="color: #ef476f; margin-bottom: 0.8rem; font-size: 1.4rem;">Invalid advisory response from server</h3>' +
+          '<p style="font-size: 1rem;">Please check the backend connection and try again.</p></div>';
+        return;
+      }
+
+      // Clear loading placeholders
+      document.querySelectorAll('.loading-placeholder').forEach(el => el.remove());
+
+      // 🟢 Green times - Update the grid
+      const greenTimesContainer = document.getElementById('greenTimesContainer');
+      greenTimesContainer.innerHTML = '';
+      
+      const timings = data.signal_timings.per_approach;
+      const colors = ['#4ecdc4', '#45b7d1', '#ffd166', '#ef476f'];
+      const icons = ['fa-car', 'fa-truck', 'fa-bus', 'fa-motorcycle'];
+      let index = 0;
+      
+      for (const dir in timings) {
+        const card = document.createElement('div');
+        card.className = `approach-card ${dir.toLowerCase()}`;
+        card.style.borderLeftColor = colors[index % colors.length];
+        
+        // Extract demand and pedestrian data from reasoning if available
+        let demand = "N/A";
+        let pedestrians = "N/A";
+        let congestion = "unknown";
+        
+        // Try to extract data from reasoning points
+        if (data.reasoning_points && data.reasoning_points.length > index) {
+          const reason = data.reasoning_points[index];
+          // Extract demand using regex
+          const demandMatch = reason.match(/Demand\s*=\s*([\d.&]+)/i);
+          if (demandMatch) demand = demandMatch[1];
+          
+          // Extract pedestrians using regex
+          const pedMatch = reason.match(/Pedestrians\s*=\s*(\d+)/i);
+          if (pedMatch) pedestrians = pedMatch[1];
+          
+          // Extract congestion
+          const congMatch = reason.match(/Congestion\s*=\s*(\w+)/i);
+          if (congMatch) congestion = congMatch[1];
+        }
+        
+        const demandLevel = parseFloat(demand) || 0;
+        const widthPercent = Math.min(100, (demandLevel / 20000) * 100);
+        const pedCount = parseInt(pedestrians) || 0;
+        
+        card.innerHTML = `
+          <div class="approach-name">
+            <i class="fas ${icons[index % icons.length]}"></i>
+            <span>Approach ${dir}</span>
+          </div>
+          <div class="approach-time">${timings[dir].toFixed(1)}</div>
+          <div class="approach-unit">SECONDS</div>
+          <div style="margin-top: 1.5rem; width: 100%;">
+            <div class="progress-label">
+              <span>TRAFFIC DEMAND</span>
+              <span style="color: #ffd166; font-weight: 800; font-size: 1rem;">${demand} PCU</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${widthPercent}%"></div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem; width: 100%; justify-content: center; flex-wrap: wrap;">
+            <span class="status ${congestion === 'free' ? 'safe' : 'danger'}">
+              <i class="fas ${congestion === 'free' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+              ${congestion.replace('_', ' ').toUpperCase()}
+            </span>
+            <span class="status ${pedCount > 50 ? 'warning' : 'safe'}">
+              <i class="fas fa-walking"></i>
+              ${pedCount} PEDS
+            </span>
+          </div>
+        `;
+        greenTimesContainer.appendChild(card);
+        index++;
+      }
+
+      // Update Chart
+      if (greenTimeChart) {
+        const labels = Object.keys(timings);
+        const values = Object.values(timings);
+        
+        greenTimeChart.data.labels = labels.map(dir => `Approach ${dir}`);
+        greenTimeChart.data.datasets[0].data = values;
+        greenTimeChart.update();
+      }
+
+      // 📊 Reasoning - Update the factors analysis
+      const reasoningDiv = document.getElementById('reasoning');
+      reasoningDiv.innerHTML = '';
+      
+      if (data.reasoning_points && data.reasoning_points.length > 0) {
+        reasoningDiv.innerHTML = '<div class="green-time-grid">';
+        
+        data.reasoning_points.forEach((reason, idx) => {
+          const approachName = Object.keys(timings)[idx] || 'Unknown';
+          reasoningDiv.innerHTML += `
+            <div class="approach-card" style="border-left-color: ${colors[idx % colors.length]}; min-height: 200px; max-height: 220px;">
+              <div class="approach-name">
+                <i class="fas ${icons[idx % icons.length]}"></i>
+                <span>Approach ${approachName}</span>
+              </div>
+              <div class="content-highlight" style="margin-top: 1rem; text-align: left; padding: 1rem; overflow: hidden;">
+                <p style="color: rgba(255,255,255,0.95); line-height: 1.5; font-size: 1rem; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">${reason}</p>
+              </div>
+            </div>
+          `;
+        });
+        
+        reasoningDiv.innerHTML += '</div>';
+      }
+
+      // 🚸 Safety Status
+      const safetyList = document.getElementById('safety');
+      safetyList.innerHTML = '';
+      
+      if (data.safety_status && data.safety_status.checks) {
+        data.safety_status.checks.forEach(item => {
+          const li = document.createElement('li');
+          li.innerHTML = `<i class="fas fa-check-circle"></i> ${item}`;
+          safetyList.appendChild(li);
+        });
+      }
+
+      // 👮 Police Action
+      const policeActionDiv = document.getElementById('policeAction');
+      policeActionDiv.innerHTML = '';
+      
+      if (data.police_action) {
+        const isActionRequired = data.police_action.some(action => 
+          action.toLowerCase().includes('required') || 
+          action.toLowerCase().includes('intervention')
+        );
+        
+        const actionText = data.police_action.join(' ');
+        const actionColor = isActionRequired ? '#ef476f' : '#4ecdc4';
+        const actionIcon = isActionRequired ? 'fa-exclamation-triangle' : 'fa-thumbs-up';
+        const actionStatus = isActionRequired ? 'IMMEDIATE ATTENTION REQUIRED' : 'TRAFFIC FLOW IS OPTIMAL';
+        
+        policeActionDiv.innerHTML = `
+          <div style="border-left-color: ${actionColor};">
+            <i class="fas ${actionIcon}" style="color: ${actionColor};"></i>
+            <div style="flex: 1;">
+              <h4 style="color: ${actionColor}; font-size: 1.3rem;">${actionText}</h4>
+              <p style="font-size: 1rem;">${actionStatus}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Add animation to progress bars
+      setTimeout(() => {
+        document.querySelectorAll('.progress-fill').forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0';
+          setTimeout(() => {
+            bar.style.width = width;
+          }, 100);
+        });
+      }, 300);
+    }
+
+    // Notification function
+    function showNotification(message, type) {
+      // Remove any existing notification
+      const existing = document.querySelector('.notification');
+      if (existing) existing.remove();
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        <span style="font-weight: 600; font-size: 0.9rem;">${message}</span>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('hidden');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 400);
+      }, 3500);
+    }
+
+    // Auto-refresh function
+    function startAutoRefresh() {
+      // Clear existing interval
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+      }
+      
+      // Refresh every 30 seconds
+      autoRefreshInterval = setInterval(getAdvice, 60000);
+      
+      // Update auto-refresh indicator
+      const refreshIndicator = document.querySelector('.auto-refresh span');
+      let seconds = 30;
+      
+      const countdown = setInterval(() => {
+        seconds--;
+        if (seconds <= 0) seconds = 30;
+        refreshIndicator.textContent = `Auto-refresh: ${seconds}s`;
+      }, 1000);
+    }
+
+    // Initialize everything when page loads
+    window.onload = function() {
+      initChart();
+      
+      // Load initial data
+      getAdvice();
+      
+      // Start auto-refresh
+      startAutoRefresh();
+      
+      // Add some initial animations
+      document.querySelectorAll('.animate-in').forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.1}s`;
+      });
+    };
+  </script>
 </body>
 </html>

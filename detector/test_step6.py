@@ -2,7 +2,7 @@ from detector.step6_signal_pipeline import run_signal_advisory
 
 # Example output from STEP 5
 queue_data = {
-    "N": {"vehicles": {}, "queue_length": 0.0, "pedestrians": 0},
+    "N": {"vehicles": {"car" : 2,"ambulance" : 2}, "queue_length": 2, "pedestrians": 0},
     "S": {
         "vehicles": {"car": 18, "bus": 4, "motorcycle": 6},
         "queue_length": 45.0,
@@ -14,7 +14,7 @@ queue_data = {
         "pedestrians": 5
     },
     "W": {
-        "vehicles": {"car": 3},
+        "vehicles": {"car": 3,"ambulance" : 2},
         "queue_length": 8.0,
         "pedestrians": 2
     }
