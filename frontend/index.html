@@ -164,12 +164,12 @@
       }
     }
 
-    /* Cards - Enhanced for visibility */
+    /* Cards - Fixed height and better layout */
     .card {
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
       backdrop-filter: blur(20px);
       border-radius: 35px;
-      padding: 3rem 3.5rem;
+      padding: 2.5rem;
       border: 2px solid rgba(255, 255, 255, 0.2);
       box-shadow: 
         var(--shadow),
@@ -177,9 +177,9 @@
       transition: var(--transition);
       position: relative;
       overflow: hidden;
-      min-height: 650px;
       display: flex;
       flex-direction: column;
+      min-height: 680px;
     }
 
     .card:hover {
@@ -239,21 +239,22 @@
       display: flex;
       align-items: center;
       gap: 1.5rem;
-      margin-bottom: 2rem;
-      font-size: 2rem;
-      font-weight: 900;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 800;
       color: #ffffff;
-      padding-bottom: 1.5rem;
+      padding-bottom: 1.2rem;
       border-bottom: 3px solid rgba(255, 255, 255, 0.15);
       position: relative;
+      flex-shrink: 0;
     }
 
     .card-title i {
       color: #ff6b6b;
-      font-size: 2.2rem;
+      font-size: 2rem;
       background: rgba(255, 255, 255, 0.95);
-      padding: 1rem;
-      border-radius: 16px;
+      padding: 0.8rem;
+      border-radius: 14px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
       animation: pulse 2s infinite;
     }
@@ -268,74 +269,49 @@
       background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
     }
 
-    /* Chart Container */
-    .chart-container {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 25px;
-      padding: 2rem;
-      margin-top: 2rem;
-      height: 380px;
-      position: relative;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.3);
-      flex-grow: 1;
-    }
-
-    /* Green Time Grid - FIXED FOR VISIBILITY */
+    /* Green Time Grid - FIXED LAYOUT */
     .green-time-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.8rem;
-      margin: 2rem 0;
-      flex-grow: 1;
-      height: auto;
+      gap: 1.5rem;
+      margin: 1rem 0;
+      flex: 1;
       min-height: 280px;
+      max-height: 320px;
+      overflow: visible;
     }
 
     @media (max-width: 1400px) {
       .green-time-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-      }
-    }
-
-    @media (max-width: 1100px) {
-      .green-time-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .green-time-grid {
-        grid-template-columns: 1fr;
-        gap: 1.2rem;
       }
     }
 
     @media (max-width: 768px) {
       .green-time-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        min-height: auto;
+        max-height: none;
       }
     }
 
+    /* Approach Cards - FIXED FOR BETTER VISIBILITY */
     .approach-card {
       background: linear-gradient(145deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.25));
       border-radius: 20px;
-      padding: 1.8rem;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       transition: var(--transition);
       border-left: 6px solid;
-      min-height: 220px;
-      max-height: 240px;
-      justify-content: center;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      min-height: 240px;
+      height: 100%;
       border: 2px solid rgba(255, 255, 255, 0.1);
-      overflow: visible;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
       position: relative;
+      overflow: hidden;
     }
 
     .approach-card:hover {
@@ -351,8 +327,8 @@
     .approach-card.nr { border-left-color: #ef476f; }
 
     .approach-name {
-      font-size: 1.4rem;
-      font-weight: 800;
+      font-size: 1.2rem;
+      font-weight: 700;
       margin-bottom: 0.8rem;
       display: flex;
       align-items: center;
@@ -360,137 +336,99 @@
       color: #ffffff;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       white-space: nowrap;
+      width: 100%;
+      justify-content: center;
     }
 
     .approach-name i {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       background: rgba(255, 255, 255, 0.15);
       padding: 0.6rem;
       border-radius: 10px;
-      min-width: 40px;
+      min-width: 36px;
       text-align: center;
     }
 
     .approach-time {
       font-size: 2.8rem;
       font-weight: 900;
-      margin: 0.5rem 0;
+      margin: 0.3rem 0;
       background: linear-gradient(135deg, #ffffff, #e0e0e0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
       line-height: 1;
+      text-align: center;
     }
 
     .approach-unit {
       color: rgba(255, 255, 255, 0.8);
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
+      text-align: center;
     }
 
-    /* Progress Bars */
+    /* Progress Bars Container */
     .progress-container {
-      margin: 2rem 0;
-    }
-
-    .progress-item {
-      margin-bottom: 1.5rem;
+      width: 100%;
+      margin: 1rem 0;
     }
 
     .progress-label {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.8rem;
-      font-size: 1.1rem;
-      font-weight: 700;
+      margin-bottom: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 600;
       color: #ffffff;
-      white-space: nowrap;
+    }
+
+    .progress-label span:last-child {
+      color: #ffd166;
+      font-weight: 700;
     }
 
     .progress-bar {
-      height: 14px;
+      height: 12px;
       background: rgba(255, 255, 255, 0.2);
-      border-radius: 7px;
+      border-radius: 6px;
       overflow: hidden;
       box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
     }
 
     .progress-fill {
       height: 100%;
-      border-radius: 7px;
+      border-radius: 6px;
       background: linear-gradient(90deg, #4ecdc4, #45b7d1);
       position: relative;
       transition: width 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 3px 10px rgba(78, 205, 196, 0.4);
+      width: 0;
     }
 
-    .progress-fill::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      animation: shimmer 2.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    /* Lists */
-    .info-list {
-      list-style: none;
-    }
-
-    .info-list li {
-      padding: 1.2rem 1.5rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
-      border-radius: 15px;
+    /* Status Container */
+    .status-container {
       display: flex;
-      align-items: center;
-      gap: 1.2rem;
-      transition: var(--transition);
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-
-    .info-list li:hover {
-      background: rgba(255, 255, 255, 0.18);
-      transform: translateX(8px);
-      border-color: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .info-list li i {
-      color: #4ecdc4;
-      font-size: 1.3rem;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      width: 100%;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
+      flex-wrap: wrap;
     }
 
-    /* Status Indicators */
     .status {
       display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 0.6rem 1rem;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.9rem;
+      gap: 0.5rem;
+      padding: 0.5rem 0.8rem;
+      border-radius: 15px;
+      font-weight: 600;
+      font-size: 0.8rem;
       backdrop-filter: blur(10px);
-      border: 2px solid;
+      border: 1px solid;
       white-space: nowrap;
     }
 
@@ -512,36 +450,187 @@
       border-color: rgba(239, 71, 111, 0.4);
     }
 
+    /* Chart Container */
+    .chart-container {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      height: 320px;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Signal Advisory Content - Better spacing */
+    #advice {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    #advice h3 {
+      font-size: 1.3rem;
+      margin: 1.5rem 0 1rem;
+      color: #4ecdc4;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+      flex-shrink: 0;
+    }
+
+    #advice h3::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+
+    /* Info List */
+    .info-list {
+      list-style: none;
+      margin: 0.5rem 0;
+    }
+
+    .info-list li {
+      padding: 1rem;
+      margin-bottom: 0.8rem;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .info-list li:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateX(5px);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .info-list li i {
+      color: #4ecdc4;
+      font-size: 1.1rem;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    /* Police Action */
+    #policeAction > div {
+      padding: 1.5rem;
+      border-radius: 15px;
+      gap: 1.2rem;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+      border: 2px solid;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      margin: 0.5rem 0;
+    }
+
+    #policeAction i {
+      font-size: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    #policeAction h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    #policeAction p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Decision Factors Card */
+    #reasoning .green-time-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem;
+      margin: 1rem 0;
+      min-height: auto;
+      max-height: none;
+    }
+
+    #reasoning .approach-card {
+      min-height: 180px;
+      padding: 1.2rem;
+    }
+
+    #reasoning .content-highlight {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin-top: 0.8rem;
+      border-left: 3px solid #4ecdc4;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #reasoning .content-highlight p {
+      color: rgba(255, 255, 255, 0.95);
+      line-height: 1.4;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin: 0;
+    }
+
     /* Button */
     .action-button {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 1.2rem;
       width: 50%;
-      padding: 1.5rem;
-      font-size: 1.3rem;
-      font-weight: 800;
+      padding: 1.3rem;
+      font-size: 1.2rem;
+      font-weight: 700;
       background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
       color: white;
       border: none;
-      border-radius: 20px;
+      border-radius: 18px;
       cursor: pointer;
       transition: var(--transition);
-      margin: 2.5rem auto;
+      margin: 2rem auto;
       position: relative;
       overflow: hidden;
       z-index: 1;
       letter-spacing: 0.5px;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+      flex-shrink: 0;
     }
 
     @media (max-width: 768px) {
       .action-button {
         width: 80%;
-        padding: 1.2rem;
-        font-size: 1.1rem;
+        padding: 1.1rem;
+        font-size: 1rem;
       }
     }
 
@@ -574,25 +663,16 @@
     }
 
     .action-button i {
-      font-size: 1.5rem;
-    }
-
-    .action-button.loading i {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      font-size: 1.3rem;
     }
 
     /* Footer */
     footer {
       text-align: center;
-      padding: 2rem;
+      padding: 1.8rem;
       background: linear-gradient(135deg, #D02752 0%, #a81e40 100%);
       border-top: 3px solid rgba(255, 255, 255, 0.15);
-      margin-top: 3rem;
+      margin-top: 2rem;
       border-radius: 40px 40px 0 0;
       box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
     }
@@ -602,46 +682,30 @@
       align-items: center;
       justify-content: center;
       gap: 1rem;
-      margin-bottom: 1.2rem;
-      font-weight: 700;
+      margin-bottom: 1rem;
+      font-weight: 600;
       color: #ffffff;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
     .certification i {
       color: #ffd166;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
     }
 
     footer p {
       color: rgba(255, 255, 255, 0.9);
-      font-size: 1rem;
-      line-height: 1.6;
+      font-size: 0.9rem;
+      line-height: 1.5;
       max-width: 900px;
       margin: 0 auto;
       background: rgba(0, 0, 0, 0.2);
-      padding: 1.2rem;
-      border-radius: 15px;
+      padding: 1rem;
+      border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .animate-in {
-      animation: fadeIn 0.8s ease-out forwards;
-    }
-
-    .delay-1 { animation-delay: 0.1s; opacity: 0; }
-    .delay-2 { animation-delay: 0.2s; opacity: 0; }
-    .delay-3 { animation-delay: 0.3s; opacity: 0; }
-    .delay-4 { animation-delay: 0.4s; opacity: 0; }
-    .delay-5 { animation-delay: 0.5s; opacity: 0; }
-
-    /* Traffic Light Animation */
+    /* Traffic Light */
     .traffic-light {
       position: fixed;
       top: 40px;
@@ -686,7 +750,7 @@
       transform: scale(1.1);
     }
 
-    /* Auto-refresh indicator */
+    /* Auto-refresh */
     .auto-refresh {
       position: fixed;
       top: 30px;
@@ -704,40 +768,22 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
-    @media (max-width: 768px) {
-      .auto-refresh {
-        top: 20px;
-        left: 20px;
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
-      }
-    }
-
-    .auto-refresh .dot {
-      width: 10px;
-      height: 10px;
-      background: #4ecdc4;
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-      box-shadow: 0 0 8px #4ecdc4;
-    }
-
     /* Notification */
     .notification {
       position: fixed;
       top: 40px;
       right: 40px;
-      padding: 1.2rem 1.8rem;
-      border-radius: 15px;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
       z-index: 1000;
       display: flex;
       align-items: center;
-      gap: 1.2rem;
+      gap: 1rem;
       animation: fadeIn 0.4s ease-out;
       backdrop-filter: blur(10px);
       border: 2px solid;
-      max-width: 350px;
+      max-width: 300px;
     }
 
     .notification.success {
@@ -752,136 +798,67 @@
       border-color: rgba(255, 255, 255, 0.3);
     }
 
-    .notification.hidden {
-      animation: fadeIn 0.4s ease-out reverse;
-      opacity: 0;
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .notification i {
-      font-size: 1.8rem;
+    .animate-in {
+      animation: fadeIn 0.8s ease-out forwards;
     }
 
-    /* Loading placeholders */
+    .delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .delay-3 { animation-delay: 0.3s; opacity: 0; }
+    .delay-4 { animation-delay: 0.4s; opacity: 0; }
+    .delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #4ecdc4, #45b7d1);
+      border-radius: 4px;
+    }
+
+    /* Loading */
     .loading-placeholder {
       text-align: center;
-      padding: 3rem;
-      grid-column: 1 / -1;
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 300px;
+      height: 100%;
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
+      border-radius: 15px;
       border: 2px dashed rgba(255, 255, 255, 0.1);
     }
 
     .loading-placeholder i {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      margin-bottom: 1rem;
       color: #4ecdc4;
       animation: pulse 2s infinite;
     }
 
     .loading-placeholder p {
-      font-size: 1.2rem;
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 600;
-    }
-
-    /* Police Action Container */
-    #policeAction > div {
-      padding: 2rem;
-      border-radius: 20px;
-      gap: 1.5rem;
-      display: flex;
-      align-items: center;
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
-      border: 2px solid;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    #policeAction i {
-      font-size: 2.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1.2rem;
-      border-radius: 15px;
-    }
-
-    #policeAction h4 {
-      font-size: 1.5rem;
-      margin-bottom: 0.8rem;
-      font-weight: 800;
-    }
-
-    #policeAction p {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    /* Section Headers */
-    h3 {
-      font-size: 1.6rem;
-      margin: 2rem 0 1.2rem;
-      color: #4ecdc4;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 2px solid rgba(78, 205, 196, 0.3);
-    }
-
-    h3::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background: currentColor;
-      border-radius: 50%;
-    }
-
-    /* Content Visibility Enhancements */
-    .content-highlight {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1.2rem;
-      border-radius: 12px;
-      margin: 1rem 0;
-      border-left: 4px solid #4ecdc4;
-    }
-
-    .value-display {
-      font-size: 1.8rem;
-      font-weight: 900;
-      color: #ffd166;
-      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
-      margin: 0.5rem 0;
-    }
-
-    .metric-label {
       font-size: 1rem;
-      color: rgba(255, 255, 255, 0.8);
-      font-weight: 600;
-      margin-bottom: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #4ecdc4, #45b7d1);
-      border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, #45b7d1, #4ecdc4);
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
   </style>
 </head>
@@ -929,11 +906,9 @@
         </div>
 
         <!-- Chart for Green Time Distribution -->
-        <div class="chart-container">
-          <canvas id="greenTimeChart"></canvas>
-        </div>
+        
       </div>
-
+      
       <!-- Right Column: Signal Advisory -->
       <div class="card highlight animate-in delay-2">
         <div class="card-title">
@@ -945,7 +920,7 @@
           <h3>📊 Reasoning & Analysis</h3>
           <div class="progress-container" id="progressContainer">
             <!-- Will be populated by JavaScript -->
-            <div class="loading-placeholder" style="min-height: 200px;">
+            <div class="loading-placeholder" style="min-height: 150px;">
               <i class="fas fa-spinner fa-spin"></i>
               <p>Analyzing traffic patterns...</p>
             </div>
@@ -958,9 +933,9 @@
           </ul>
 
           <h3>🧭 Police Action Required</h3>
-          <div id="policeAction" style="margin-top: 1rem;">
+          <div id="policeAction" style="margin-top: 0.5rem;">
             <!-- Will be populated by JavaScript -->
-            <div style="text-align: center; padding: 2rem;">
+            <div style="text-align: center; padding: 1.5rem;">
               <i class="fas fa-spinner fa-spin"></i>
               <p>Assessing situation...</p>
             </div>
@@ -968,14 +943,17 @@
         </div>
       </div>
     </div>
+      <div class="chart-container">
+          <canvas id="greenTimeChart"></canvas>
+        </div>
 
     <!-- Decision Factors Card -->
-    <div class="card animate-in delay-3" style="grid-column: 1 / -1; min-height: 450px;">
+    <div class="card animate-in delay-3" style="grid-column: 1 / -1; min-height: 420px;">
       <div class="card-title">
         <i class="fas fa-chart-bar"></i>
         <span>📈 Decision Factors Analysis</span>
       </div>
-      <div id="reasoning" style="margin-top: 1rem; flex-grow: 1;">
+      <div id="reasoning" style="margin-top: 0.5rem; flex: 1;">
         <!-- Will be populated by JavaScript -->
         <div class="loading-placeholder">
           <i class="fas fa-spinner fa-spin"></i>
@@ -1051,10 +1029,10 @@
               labels: {
                 color: 'white',
                 font: {
-                  size: 14,
+                  size: 12,
                   weight: '600'
                 },
-                padding: 20
+                padding: 15
               }
             },
             tooltip: {
@@ -1063,7 +1041,7 @@
               bodyColor: 'white',
               borderColor: 'rgba(78, 205, 196, 0.5)',
               borderWidth: 2,
-              cornerRadius: 10,
+              cornerRadius: 8,
               callbacks: {
                 label: function(context) {
                   return `${context.label}: ${context.raw} seconds`;
@@ -1121,10 +1099,10 @@
     function renderAdvisory(data) {
       if (!data || data.status !== "success") {
         document.getElementById("greenTimesContainer").innerHTML = 
-          '<div style="text-align: center; padding: 2rem; color: #ef476f; grid-column: 1 / -1; background: rgba(239, 71, 111, 0.1); border-radius: 20px; border: 2px solid rgba(239, 71, 111, 0.3);">' +
-          '<i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1.2rem;"></i><br>' +
-          '<h3 style="color: #ef476f; margin-bottom: 0.8rem; font-size: 1.4rem;">Invalid advisory response from server</h3>' +
-          '<p style="font-size: 1rem;">Please check the backend connection and try again.</p></div>';
+          '<div style="text-align: center; padding: 1.5rem; color: #ef476f; grid-column: 1 / -1; background: rgba(239, 71, 111, 0.1); border-radius: 15px; border: 2px solid rgba(239, 71, 111, 0.3);">' +
+          '<i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i><br>' +
+          '<h3 style="color: #ef476f; margin-bottom: 0.5rem; font-size: 1.2rem;">Invalid advisory response from server</h3>' +
+          '<p style="font-size: 0.9rem;">Please check the backend connection and try again.</p></div>';
         return;
       }
 
@@ -1138,11 +1116,13 @@
       const timings = data.signal_timings.per_approach;
       const colors = ['#4ecdc4', '#45b7d1', '#ffd166', '#ef476f'];
       const icons = ['fa-car', 'fa-truck', 'fa-bus', 'fa-motorcycle'];
+      const directions = ['S', 'W', 'Z', 'N']; // Default directions
       let index = 0;
       
       for (const dir in timings) {
+        const direction = directions[index] || dir;
         const card = document.createElement('div');
-        card.className = `approach-card ${dir.toLowerCase()}`;
+        card.className = `approach-card`;
         card.style.borderLeftColor = colors[index % colors.length];
         
         // Extract demand and pedestrian data from reasoning if available
@@ -1173,20 +1153,20 @@
         card.innerHTML = `
           <div class="approach-name">
             <i class="fas ${icons[index % icons.length]}"></i>
-            <span>Approach ${dir}</span>
+            <span>Approach ${direction}</span>
           </div>
           <div class="approach-time">${timings[dir].toFixed(1)}</div>
           <div class="approach-unit">SECONDS</div>
-          <div style="margin-top: 1.5rem; width: 100%;">
+          <div class="progress-container">
             <div class="progress-label">
               <span>TRAFFIC DEMAND</span>
-              <span style="color: #ffd166; font-weight: 800; font-size: 1rem;">${demand} PCU</span>
+              <span>${demand} PCU</span>
             </div>
             <div class="progress-bar">
               <div class="progress-fill" style="width: ${widthPercent}%"></div>
             </div>
           </div>
-          <div style="display: flex; gap: 1rem; margin-top: 1.5rem; width: 100%; justify-content: center; flex-wrap: wrap;">
+          <div class="status-container">
             <span class="status ${congestion === 'free' ? 'safe' : 'danger'}">
               <i class="fas ${congestion === 'free' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
               ${congestion.replace('_', ' ').toUpperCase()}
@@ -1206,7 +1186,7 @@
         const labels = Object.keys(timings);
         const values = Object.values(timings);
         
-        greenTimeChart.data.labels = labels.map(dir => `Approach ${dir}`);
+        greenTimeChart.data.labels = labels.map((dir, idx) => `Approach ${directions[idx] || dir}`);
         greenTimeChart.data.datasets[0].data = values;
         greenTimeChart.update();
       }
@@ -1219,15 +1199,15 @@
         reasoningDiv.innerHTML = '<div class="green-time-grid">';
         
         data.reasoning_points.forEach((reason, idx) => {
-          const approachName = Object.keys(timings)[idx] || 'Unknown';
+          const direction = directions[idx] || 'Unknown';
           reasoningDiv.innerHTML += `
-            <div class="approach-card" style="border-left-color: ${colors[idx % colors.length]}; min-height: 200px; max-height: 220px;">
+            <div class="approach-card" style="border-left-color: ${colors[idx % colors.length]}; min-height: 180px;">
               <div class="approach-name">
                 <i class="fas ${icons[idx % icons.length]}"></i>
-                <span>Approach ${approachName}</span>
+                <span>Approach ${direction}</span>
               </div>
-              <div class="content-highlight" style="margin-top: 1rem; text-align: left; padding: 1rem; overflow: hidden;">
-                <p style="color: rgba(255,255,255,0.95); line-height: 1.5; font-size: 1rem; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">${reason}</p>
+              <div class="content-highlight">
+                <p>${reason}</p>
               </div>
             </div>
           `;
@@ -1267,8 +1247,8 @@
           <div style="border-left-color: ${actionColor};">
             <i class="fas ${actionIcon}" style="color: ${actionColor};"></i>
             <div style="flex: 1;">
-              <h4 style="color: ${actionColor}; font-size: 1.3rem;">${actionText}</h4>
-              <p style="font-size: 1rem;">${actionStatus}</p>
+              <h4 style="color: ${actionColor};">${actionText}</h4>
+              <p>${actionStatus}</p>
             </div>
           </div>
         `;
@@ -1296,7 +1276,7 @@
       notification.className = `notification ${type}`;
       notification.innerHTML = `
         <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-        <span style="font-weight: 600; font-size: 0.9rem;">${message}</span>
+        <span style="font-weight: 600; font-size: 0.85rem;">${message}</span>
       `;
       
       document.body.appendChild(notification);

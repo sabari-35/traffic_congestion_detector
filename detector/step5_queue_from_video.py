@@ -22,6 +22,11 @@ def build_queue_data_from_video(video_path: str, max_frames: int = 300):
         "W": {"vehicles": {}, "queue_length": 0.0, "pedestrians": 0},
     }
 
+    # ✅ Track UNIQUE IDs per approach (CRITICAL FIX)
+    seen_vehicle_ids = {k: set() for k in queue_data}
+    seen_queued_ids = {k: set() for k in queue_data}
+    seen_pedestrian_ids = {k: set() for k in queue_data}
+
     frame_count = 0
 
     while True:
@@ -44,6 +49,8 @@ def build_queue_data_from_video(video_path: str, max_frames: int = 300):
             })
 
         tracked = tracker.update(formatted)
+
+        # Vehicles considered "queued" (low speed / stopped)
         queued_objs = queue_estimator.update(tracked)
         queued_ids = {q["id"] for q in queued_objs}
 
@@ -53,19 +60,33 @@ def build_queue_data_from_video(video_path: str, max_frames: int = 300):
             if approach is None:
                 continue
 
+            obj_id = obj["id"]
             label = obj["label"]
 
+            # ----------------------------
+            # 🚶 Pedestrians (unique count)
+            # ----------------------------
             if label == "person":
-                queue_data[approach]["pedestrians"] += 1
+                if obj_id not in seen_pedestrian_ids[approach]:
+                    seen_pedestrian_ids[approach].add(obj_id)
+                    queue_data[approach]["pedestrians"] += 1
 
+            # ----------------------------
+            # 🚗 Vehicles (unique count)
+            # ----------------------------
             elif label in VEHICLE_CLASSES:
-                queue_data[approach]["vehicles"][label] = (
-                    queue_data[approach]["vehicles"].get(label, 0) + 1
-                )
+                if obj_id not in seen_vehicle_ids[approach]:
+                    seen_vehicle_ids[approach].add(obj_id)
+                    queue_data[approach]["vehicles"][label] = (
+                        queue_data[approach]["vehicles"].get(label, 0) + 1
+                    )
 
-                # Increase queue length only for queued vehicles
-                if obj["id"] in queued_ids:
-                    queue_data[approach]["queue_length"] += 5.5  # avg vehicle length
+                # ----------------------------
+                # 📏 Queue length (unique queued vehicles)
+                # ----------------------------
+                if obj_id in queued_ids and obj_id not in seen_queued_ids[approach]:
+                    seen_queued_ids[approach].add(obj_id)
+                    queue_data[approach]["queue_length"] += 5.5  # meters per vehicle
 
         frame_count += 1
 

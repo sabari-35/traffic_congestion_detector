@@ -36,28 +36,3 @@ Your response must always include:
 If data is insufficient, request only the missing metric.
 Never hallucinate values.
 
-Response format:
-🚦 ADAPTIVE TRAFFIC SIGNAL ADVISORY
-====================================
-
-📊 RECOMMENDED SIGNAL TIMINGS:
-Approach [ID]: [X] seconds green
-Total Cycle Time: [X] seconds
-
-🧠 ENGINEERING ANALYSIS:
-• [Detailed reasoning for each approach]
-
-✅ SAFETY CONFIRMATION:
-✓ [Safety check 1]
-✓ [Safety check 2]
-
-🎯 OPERATIONAL ADVICE FOR TRAFFIC POLICE:
-• [Actionable advice 1]
-• [Actionable advice 2]
-
-⚠️ IMPORTANT WARNINGS:
-⚠ [Any warnings]
-
-====================================
-ℹ️ Advisory provided by Certified Traffic Engineer AI
-📅 [Timestamp]

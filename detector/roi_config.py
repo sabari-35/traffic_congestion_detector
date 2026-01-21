@@ -1,31 +1,37 @@
 import numpy as np
 
+# ==============================
+# Container size
+# ==============================
+CONTAINER_W = 960
+CONTAINER_H = 540
+
+# ==============================
+# Container origins
+# ==============================
+CONTAINERS = {
+    "E": (0, 0),                      # top-left
+    "N": (CONTAINER_W, 0),            # top-right
+    "S": (0, CONTAINER_H),            # bottom-left
+    "W": (CONTAINER_W, CONTAINER_H),  # bottom-right
+}
+
+# ==============================
+# Canonical ROI (same for all)
+# ==============================
+BASE_ROI = np.array([
+    (80, 200),   # ⬅ move right
+    (940, 200),
+    (940, 630),
+    (80, 630)
+], dtype=np.int32)
+
+
+
+# ==============================
+# Build ROIs (global)
+# ==============================
 ROIS = {
-    "N": np.array([
-        (300, 900),
-        (600, 900),
-        (600, 1200),
-        (300, 1200)
-    ], dtype=np.int32),
-
-    "S": np.array([
-        (200, 600),
-        (800, 600),
-        (800, 900),
-        (200, 900)
-    ], dtype=np.int32),
-
-    "E": np.array([
-        (800, 500),
-        (1100, 500),
-        (1100, 800),
-        (800, 800)
-    ], dtype=np.int32),
-
-    "W": np.array([
-        (0, 500),
-        (300, 500),
-        (300, 800),
-        (0, 800)
-    ], dtype=np.int32)
+    d: BASE_ROI + np.array(CONTAINERS[d])
+    for d in CONTAINERS
 }

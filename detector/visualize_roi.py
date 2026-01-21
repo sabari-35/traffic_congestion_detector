@@ -5,7 +5,7 @@ from detector.roi_config import ROIS
 from detector.object_tracker import ObjectTracker
 from detector.queue_estimator import QueueEstimator
 
-# ✅ INIT TRACKER & QUEUE ESTIMATOR (ONCE)
+# INIT TRACKER & QUEUE ESTIMATOR (ONCE)
 tracker = ObjectTracker()
 queue_estimator = QueueEstimator()
 

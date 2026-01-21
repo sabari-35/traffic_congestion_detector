@@ -21,10 +21,10 @@ def build_metrics(assigned_objects):
                     vehicle_counts.get(obj["label"], 0) + 1
                 )
 
-        # ✅ 1. Estimate queue length
+        # 1. Estimate queue length
         queue_length = estimate_queue_length(vehicle_counts)
 
-        # ✅ 2. Temporary metrics to compute density
+        # 2. Temporary metrics to compute density
         temp_metrics = TrafficMetrics(
             approach_id=approach,
             vehicle_counts=vehicle_counts,
@@ -37,10 +37,10 @@ def build_metrics(assigned_objects):
 
         density = temp_metrics.density  # PCU per lane
 
-        # ✅ 3. Hybrid congestion classification
+        # 3. Hybrid congestion classification
         congestion = classify_congestion(queue_length, density)
 
-        # ✅ 4. Final metrics
+        # 4. Final metrics
         metrics[approach] = TrafficMetrics(
             approach_id=approach,
             vehicle_counts=vehicle_counts,

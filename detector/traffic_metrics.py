@@ -20,7 +20,7 @@ class TrafficMetrics:
     current_green_time: float
     link_length: Optional[float] = None
 
-    # ✅ expose demand_pcu (required by optimizer)
+    # expose demand_pcu (required by optimizer)
     demand_pcu: float = field(init=False)
 
     def __post_init__(self):
@@ -34,7 +34,7 @@ class TrafficMetrics:
             total_pcu += count * pcu
         return total_pcu
 
-    # ✅ ✅ CORRECT PLACE FOR DENSITY
+    # CORRECT PLACE FOR DENSITY
     @property
     def density(self) -> float:
         """
@@ -55,7 +55,7 @@ class TrafficMetrics:
         return False
 
 
-# ✅ REQUIRED FOR CHATBOT IMPORTS
+# REQUIRED FOR CHATBOT IMPORTS
 class TrafficMetricsProcessor:
     """Convert YOLO / raw input into TrafficMetrics"""
 

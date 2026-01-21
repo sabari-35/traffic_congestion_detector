@@ -25,7 +25,7 @@ def run_intersection():
         "decision": decision
     }
 
-# 🔴 THIS IS WHAT YOU ARE MISSING
+# THIS IS WHAT YOU ARE MISSING
 if __name__ == "__main__":
     print("\n🚦 RUNNING MULTI-CAMERA INTERSECTION\n")
     output = run_intersection()

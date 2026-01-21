@@ -10,7 +10,7 @@ PCU_MAP = {
     "bus": 3.0,
     "truck": 3.0,
     "auto": 1.2,
-    "ambulance": 4.0   # 🚑 treat as heavy + priority
+    "ambulance": 4.0   #  treat as heavy + priority
 }
 
 LANES = {"N": 3, "S": 3, "E": 2, "W": 1}
@@ -27,11 +27,11 @@ def calculate_pcu(vehicle_counts: dict) -> float:
 
 
 def classify_congestion(pcu_per_lane: float) -> str:
-    if pcu_per_lane > 40:
+    if pcu_per_lane > 60:
         return "severely_congested"
-    elif pcu_per_lane > 25:
+    elif pcu_per_lane > 40:
         return "congested"
-    elif pcu_per_lane > 10:
+    elif pcu_per_lane > 20:
         return "stable"
     return "free"
 
@@ -61,7 +61,8 @@ def build_metrics_from_queue(queue_data: dict):
         base_pcu = calculate_pcu(data["vehicles"])
 
         # Queue amplification (long queue → higher urgency)
-        queue_factor = max(1.0, data["queue_length"] / 10)
+        queue_factor = min(2.5, max(1.0, data["queue_length"] / 40))
+
 
         # Pedestrian penalty
         pedestrian_penalty = data["pedestrians"] * 1.5
@@ -69,7 +70,9 @@ def build_metrics_from_queue(queue_data: dict):
         total_pcu = (base_pcu * queue_factor) + pedestrian_penalty
         pcu_per_lane = total_pcu / lanes
 
-        congestion = classify_congestion(pcu_per_lane)
+        raw_pcu_per_lane = base_pcu / lanes
+        congestion = classify_congestion(raw_pcu_per_lane)
+
 
         metrics[approach] = TrafficMetrics(
             approach_id=approach,

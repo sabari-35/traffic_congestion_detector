@@ -32,23 +32,23 @@ function renderAdvisory(data) {
   safety.innerHTML = "";
   policeAction.innerHTML = "";
 
-  // 🟢 Green times
+  // Green times
   const timings = data.signal_timings.per_approach;
   for (const dir in timings) {
     greenTimes.innerHTML += `<li><b>Approach ${dir}:</b> ${timings[dir].toFixed(1)} seconds</li>`;
   }
 
-  // 📊 Reasoning
+  // Reasoning
   data.reasoning_points.forEach((r) => {
     reasoning.innerHTML += `<li>${r}</li>`;
   });
 
-  // 🚸 Safety
+  // Safety
   data.safety_status.checks.forEach((s) => {
     safety.innerHTML += `<li>${s}</li>`;
   });
 
-  // 👮 Police Action
+  // Police Action
   data.police_action.forEach((a) => {
     policeAction.innerHTML += `<li>${a}</li>`;
   });

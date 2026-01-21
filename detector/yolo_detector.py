@@ -6,7 +6,7 @@ model = YOLO("yolov8n.pt")
 
 # COCO classes we care about
 VALID_CLASSES = {
-    "car", "bus", "truck", "motorcycle", "person"
+    "car", "bus", "truck", "motorcycle", "person","ambulance"
 }
 
 def run_yolo(video_path="traffic.mp4"):

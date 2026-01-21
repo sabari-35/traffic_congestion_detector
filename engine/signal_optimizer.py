@@ -2,11 +2,11 @@
 Optimize signal timings with PRIORITY-FIRST allocation.
 
 Rules:
-1. 🚑 Emergency vehicles get ABSOLUTE priority
-2. 🔥 High demand approaches get green FIRST
-3. 🚸 Pedestrian safety is enforced
-4. ⚠ Spillback risk can extend green
-5. ⏱ Cycle time is strictly respected
+1. Emergency vehicles get ABSOLUTE priority
+2. High demand approaches get green FIRST
+3. Pedestrian safety is enforced
+4. Spillback risk can extend green
+5. Cycle time is strictly respected
 """
 
 from typing import List, Dict, Tuple
@@ -33,7 +33,7 @@ class SignalOptimizer:
         MAX_GREEN = TrafficConstants.MAX_GREEN_TIME
 
         # =====================================================
-        # 🚑 STEP 0: EMERGENCY OVERRIDE (ABSOLUTE PRIORITY)
+        #  STEP 0: EMERGENCY OVERRIDE (ABSOLUTE PRIORITY)
         # =====================================================
         emergency_approach = None
         for m in all_metrics:

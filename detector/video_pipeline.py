@@ -66,14 +66,14 @@ def extract_tracked_objects(video_path: str, max_frames: int = 300):
                 "label": det["label"]
             })
 
-        # 🔁 TRACK
+        # TRACK
         tracked = tracker.update(formatted)
 
-        # 🔁 QUEUE
+        # QUEUE
         queue_objs = queue_estimator.update(tracked)
         queue_ids = {q["id"] for q in queue_objs}
 
-        # ✅ ASSIGN APPROACH *AFTER* TRACKING
+        # ASSIGN APPROACH *AFTER* TRACKING
         for obj in tracked:
             cx, cy = obj["center"]
             approach = assign_approach(cx, cy)
@@ -83,7 +83,7 @@ def extract_tracked_objects(video_path: str, max_frames: int = 300):
 
             tracked_objects.append({
                 "label": obj["label"],
-                "approach": approach,        # ✅ NOW CORRECT
+                "approach": approach,        # NOW CORRECT
                 "is_queued": obj["id"] in queue_ids
             })
 

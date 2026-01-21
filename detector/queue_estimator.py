@@ -24,4 +24,4 @@ class QueueEstimator:
 
             self.last_positions[obj_id] = (cx, cy)
 
-        return queued_objects   # ✅ ALWAYS LIST
+        return queued_objects   
